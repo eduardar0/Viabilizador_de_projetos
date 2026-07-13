@@ -1,108 +1,211 @@
 # Viabilizador de Projetos com Machine Learning
 
-Este é um projeto prático de Inteligência Artificial que utiliza um modelo de Regressão Logística para prever a viabilidade financeira e de impacto de novos projetos. O script analisa dados históricos, treina o modelo preditivo automaticamente (caso ele ainda não exista) e exporta os arquivos binários para previsões futuras rápidas.
+Este projeto utiliza **Machine Learning** para prever a viabilidade de novos projetos com base em dados históricos. O modelo empregado é uma **Regressão Logística**, capaz de classificar um projeto como viável ou não, além de informar a probabilidade de sucesso da previsão.
+
+O sistema realiza automaticamente o treinamento do modelo caso ele ainda não exista e reutiliza o modelo salvo nas próximas execuções, tornando as previsões mais rápidas.
 
 ---
 
-## Funcionalidades
+# Funcionalidades
 
-* **Treinamento Automatizado:** Identifica se o modelo preditivo já foi treinado; caso contrário, realiza o treinamento na hora usando dados históricos.
-* **Normalização de Dados:** Aplica o `StandardScaler` para garantir que as escalas de investimento e retorno não distorçam as previsões do modelo.
-* **Persistência de Objetos:** Salva o modelo, o normalizador (scaler) e as métricas em disco utilizando a biblioteca `joblib`.
-* **Cálculo de Probabilidade:** Além de classificar se o projeto é viável ou não (1 ou 0), o modelo retorna a porcentagem exata de chance de sucesso do projeto.
+- Treinamento automático do modelo de Machine Learning.
+- Normalização dos dados utilizando `StandardScaler`.
+- Divisão automática dos dados em treino (70%) e teste (30%).
+- Avaliação do modelo utilizando métricas de classificação.
+- Salvamento do modelo treinado, do scaler e das métricas em arquivos `.joblib`.
+- Predição da viabilidade de novos projetos.
+- Cálculo da probabilidade de sucesso de cada projeto analisado.
 
 ---
 
-## Estrutura do Projeto
+# Estrutura do Projeto
 
 ```text
 viabilidade-projetos/
 │
-├── main.py                 # Código principal (Treino, avaliação e predição)
-├── projects_data.csv       # Base de dados histórica para o treino do modelo
-├── requirements.txt        # Dependências do projeto (Bibliotecas Python)
-└── .gitignore              # Filtro para evitar o envio de arquivos desnecessários ao GitHub
+├── main.py                      # Código principal
+├── projects_data.csv            # Base de dados utilizada para treinamento
+├── requirements.txt             # Dependências do projeto
+├── README.md                    # Documentação
+├── .gitignore                   # Arquivos ignorados pelo Git
+│
+├── logistic_model.joblib        # Modelo treinado (gerado automaticamente)
+├── logistic_model_scaler.joblib # Scaler salvo automaticamente
+└── logistic_model_metrics.joblib# Métricas do modelo
+```
 
+Os arquivos `.joblib` são criados automaticamente após a primeira execução e normalmente não devem ser enviados ao GitHub.
 
+---
 
-## Tecnologias Utilizadas
+# Tecnologias Utilizadas
 
 - Python 3
-- Pandas: Manipulacao e analise de dados.
-- Scikit-Learn: Criacao do modelo de Machine Learning, divisao de dados e metricas de avaliacao.
-- NumPy: Operacoes matematicas e suporte a arrays.
-- Joblib: Salvamento e carregamento eficiente de modelos preditivos.
+- Pandas
+- NumPy
+- Scikit-Learn
+- Joblib
 
-## Como Configurar e Executar o Projeto
+---
 
-Siga os passos abaixo para preparar o ambiente na sua maquina:
+# Como Configurar o Projeto
 
-### 1. Clonar o repositorio
+## 1. Clonar o repositório
 
-```git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
-cd viabilidade-projetos```
+```bash
+git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
 
+cd viabilidade-projetos
+```
 
-### 2. Configurar o Ambiente Virtual (Recomendado)
+---
 
-### No Linux/macOS:
+## 2. Criar um ambiente virtual (opcional, mas recomendado)
 
-``` python3 -m venv venv
-source venv/bin/activate  ```
+### Linux/macOS
 
+```bash
+python3 -m venv venv
 
-### No Windows:
+source venv/bin/activate
+```
 
-``` python -m venv venv
-venv\Scripts\activate  ```      
+### Windows
 
+```bash
+python -m venv venv
 
-### 3. Instalar as Dependencias
+venv\Scripts\activate
+```
 
+---
 
-``` pip install -r requirements.txt  ```      
+## 3. Instalar as dependências
 
+```bash
+pip install -r requirements.txt
+```
 
+---
 
-## Execucao e Treinamento do Modelo
+# Como Executar
 
-O script main.py foi projetado para ser inteligente e evitar reprocessamento desnecessario. O comportamento do treino e da execucao funciona da seguinte forma:
+Execute o arquivo principal:
 
-### Como Rodar as Previsoes
+```bash
+python main.py
+```
 
-Para executar o projeto e obter a analise de viabilidade dos novos projetos configurados no codigo, mude para o seu ambiente virtual e execute:
+Na primeira execução o sistema irá:
 
-```python main.py```   
+1. Ler o arquivo `projects_data.csv`;
+2. Normalizar os dados;
+3. Dividir os dados em treino e teste;
+4. Treinar a Regressão Logística;
+5. Avaliar o modelo;
+6. Salvar os arquivos:
 
+- `logistic_model.joblib`
+- `logistic_model_scaler.joblib`
+- `logistic_model_metrics.joblib`
 
-### Como Funciona o Treinamento
+Nas próximas execuções, esses arquivos serão carregados automaticamente, evitando um novo treinamento.
 
-- Treino Automatico: Ao rodar o comando acima pela primeira vez, o script notara a ausencia do arquivo logistic_model.joblib. Ele lera automaticamente o arquivo projects_data.csv, treinara o modelo, exibira as metricas no terminal e salvara o progresso em disco.
+---
 
-- Uso do Modelo Pre-treinado: Nas execucoes seguintes, o script carregara o modelo diretamente do disco em menos de um segundo, sem precisar ler o arquivo CSV novamente.
+# Como Realizar Novas Previsões
 
-### Como Forcar um Novo Treinamento
+Os projetos que serão analisados são definidos na variável `new_projects` dentro do arquivo `main.py`.
 
-Se voce atualizou o arquivo projects_data.csv com novos dados historicos e precisa retreinar o modelo do zero, basta deletar os arquivos binarios gerados antes de rodar o script:
+Exemplo:
 
-No Linux/macOS:
+```python
+new_projects = [
+    {
+        "investment": 13000,
+        "expected_return": 69000,
+        "impact_score": 7
+    },
+    {
+        "investment": 45000,
+        "expected_return": 60000,
+        "impact_score": 6
+    },
+    {
+        "investment": 100000,
+        "expected_return": 150000,
+        "impact_score": 9
+    }
+]
 
-```rm *.joblib
-python main.py```  
+predictions, metrics = train_or_predict(new_projects)
 
+print(predictions)
+print(metrics)
+```
 
-No Windows (Prompt de Comando):
+A saída apresenta:
 
-```del *.joblib
-python main.py```
+- investimento;
+- retorno esperado;
+- impacto;
+- probabilidade de sucesso;
+- classificação de viabilidade (0 ou 1).
 
+---
 
-## Resultados do Modelo
+# Como Treinar Novamente
 
-O modelo atual foi testado e avaliado com dados divididos na proporcao de 70% para treino e 30% para teste, alcancando excelentes metricas de assertividade:
+Caso o arquivo `projects_data.csv` seja atualizado com novos dados históricos, basta apagar os arquivos `.joblib`.
 
-- Acuracia Geral: 86%
-- Precisao (Classe 1 - Viavel): 82%
-- Recall (Classe 1 - Viavel): 76%
+### Linux/macOS
 
-Nota: Os arquivos binarios .joblib gerados apos a primeira execucao sao ignorados pelo Git para manter o repositorio leve e focado apenas no codigo-fonte.
+```bash
+rm *.joblib
+
+python main.py
+```
+
+### Windows
+
+```bash
+del *.joblib
+
+python main.py
+```
+
+Na próxima execução o modelo será treinado novamente utilizando os dados atualizados.
+
+---
+
+# Avaliação do Modelo
+
+O modelo é avaliado utilizando:
+
+- Accuracy
+- Precision
+- Recall
+- F1-Score
+
+As métricas completas ficam armazenadas em:
+
+```text
+logistic_model_metrics.joblib
+```
+
+e também podem ser exibidas durante a execução do programa.
+
+---
+
+# Tecnologias de Machine Learning Utilizadas
+
+- Regressão Logística (`LogisticRegression`)
+- StandardScaler
+- Train/Test Split
+- Classification Report
+
+---
+
+# Autor
+
+Projeto desenvolvido para fins de estudo e prática de Machine Learning utilizando Python e Scikit-Learn.
