@@ -1,0 +1,11 @@
+# Ambientes virtuais
+venv/
+.venv/
+env/
+
+# Arquivos gerados pelo modelo (Binários)
+*.joblib
+
+# Cache do Python
+__pycache__/
+.pytest_cache/
